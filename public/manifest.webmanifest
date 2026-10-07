@@ -1,0 +1,12 @@
+{
+  "name": "DocSuite",
+  "short_name": "DocSuite",
+  "description": "Vos documents, organisés.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F7F8FB",
+  "theme_color": "#F7F8FB",
+  "orientation": "portrait",
+  "lang": "fr",
+  "icons": []
+}
