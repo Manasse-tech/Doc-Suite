@@ -1,4 +1,4 @@
-import { ArrowLeft, CloudUpload, Activity } from 'lucide-react'
+import { ArrowLeft, CloudUpload } from 'lucide-react'
 import { useState } from 'react'
 import StatusBar from '../components/StatusBar'
 import type { ToastTone } from '../components/Toast'
@@ -13,7 +13,6 @@ interface AccountScreenProps {
 }
 
 export default function AccountScreen({ onBack, onLogout, theme, onThemeChange, onNotify }: AccountScreenProps) {
-  const [premium, setPremium] = useState(false)
   const [confirmLogout, setConfirmLogout] = useState(false)
   return (
     <div className="flex flex-col h-full bg-paper-50">
@@ -26,45 +25,18 @@ export default function AccountScreen({ onBack, onLogout, theme, onThemeChange, 
       </div>
 
       <div className="flex-1 overflow-y-auto no-scrollbar px-4 pb-6 space-y-4">
-        <div className="rounded-2xl bg-white shadow-card px-4 py-4 flex items-center justify-between">
-          <div>
-            <p className="text-[11.5px] text-ink-800/45">Abonnement</p>
-            <p className="text-[14.5px] font-bold text-ink-950 mt-0.5">{premium ? 'Formule premium' : 'Formule gratuite'}</p>
-          </div>
-          <button onClick={() => setPremium((value) => !value)} className="h-9 px-4 rounded-full bg-gradient-to-r from-amber-500 to-rose-500 text-white text-[12.5px] font-bold">
-            {premium ? 'Premium activé' : 'Passer premium'}
-          </button>
-        </div>
-
         <div className="rounded-2xl bg-white shadow-card px-4 py-4">
-          <div className="flex items-center gap-2.5 mb-3">
+          <div className="flex items-center gap-2.5">
             <CloudUpload size={17} className="text-iris-500" />
-            <p className="text-[14px] font-semibold text-ink-950">Espace cloud utilisé</p>
-            <span className="ml-auto text-[12.5px] font-mono text-ink-800/50">0 / 2 Go</span>
+            <div>
+              <p className="text-[14px] font-semibold text-ink-950">Stockage local</p>
+              <p className="mt-1 text-[12px] leading-relaxed text-ink-800/55">Vos documents restent sur cet appareil. Exportez-les régulièrement : le stockage du navigateur n&apos;est pas une sauvegarde garantie.</p>
+            </div>
           </div>
-          <div className="h-1.5 rounded-full bg-paper-100 overflow-hidden">
-            <div className="h-full w-0 rounded-full bg-iris-500" />
-          </div>
-          <button onClick={() => onNotify('L’espace cloud sera connecté au backend dans la prochaine étape.', 'info')} className="mt-3 text-[12.5px] font-semibold text-iris-500">
-            Augmenter l'espace cloud
+          <button onClick={() => onNotify('La sauvegarde cloud nécessite une connexion configurée.', 'info')} className="mt-3 text-[12.5px] font-semibold text-iris-500">
+            Connecter un espace cloud
           </button>
         </div>
-
-        <div className="rounded-2xl bg-white shadow-card px-4 py-4">
-          <div className="flex items-center gap-2.5 mb-3">
-            <Activity size={17} className="text-iris-500" />
-            <p className="text-[14px] font-semibold text-ink-950">Trafic de synchronisation</p>
-            <span className="ml-auto text-[12.5px] font-mono text-ink-800/50">0 / 5 Go</span>
-          </div>
-          <div className="h-1.5 rounded-full bg-paper-100 overflow-hidden">
-            <div className="h-full w-0 rounded-full bg-iris-500" />
-          </div>
-        </div>
-
-        <p className="text-[11.5px] leading-relaxed text-ink-800/45 px-1">
-          Au-delà de votre quota gratuit, vos fichiers restent disponibles 60 jours
-          avant suppression automatique. Téléchargez-les à temps si besoin.
-        </p>
 
         <button onClick={() => setConfirmLogout(true)} className="w-full h-12 rounded-2xl bg-white shadow-card text-[14px] font-semibold text-rose-500">
           Se déconnecter

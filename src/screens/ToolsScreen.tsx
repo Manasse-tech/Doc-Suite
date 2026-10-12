@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import {
-  Sparkles,
   TypeOutline,
   Highlighter,
   Signature,
@@ -36,7 +35,6 @@ interface ToolsScreenProps {
 }
 
 const EDIT_TOOLS = [
-  { label: 'Résumé par IA', icon: Sparkles, action: 'unavailable' },
   { label: 'Insérer du texte', icon: TypeOutline, action: 'unavailable' },
   { label: 'Annoter', icon: Highlighter, action: 'unavailable' },
   { label: 'Signature', icon: Signature, action: 'signature' },
@@ -68,7 +66,7 @@ function ToolTile({
   onClick,
 }: {
   label: string
-  icon: typeof Sparkles
+  icon: typeof TypeOutline
   badge?: 'new' | 'hot'
   disabled?: boolean
   onClick: () => void
@@ -96,16 +94,14 @@ function ToolTile({
 
 export default function ToolsScreen({ onOpenSignature, onOpenScanner, onNavChange, onNotify, theme, onThemeChange }: ToolsScreenProps) {
   const [language, setLanguage] = useState(() => localStorage.getItem('docsuite-language') || 'Français')
-  const [ethnicity, setEthnicity] = useState(() => localStorage.getItem('docsuite-ethnicity') || 'Non renseignée')
-  const [openPreference, setOpenPreference] = useState<'language' | 'ethnicity' | null>(null)
-  const languages = ['Français', 'English', 'Português', 'Español', 'Deutsch', 'Baoulé', 'Dioula']
-  const ethnicities = ['Non renseignée', 'Baoulé', 'Akan', 'Dioula', 'Bété', 'Sénoufo', 'Guéré', 'Autre']
+  const [openLanguage, setOpenLanguage] = useState(false)
+  const languages = ['Français', 'English', 'Español', 'Português', 'Deutsch', 'Italiano', 'العربية', '中文简体', '日本語']
 
-  const choosePreference = (kind: 'language' | 'ethnicity', value: string) => {
-    if (kind === 'language') { setLanguage(value); localStorage.setItem('docsuite-language', value) }
-    else { setEthnicity(value); localStorage.setItem('docsuite-ethnicity', value) }
-    setOpenPreference(null)
-    onNotify(`${kind === 'language' ? 'Langue' : 'Ethnie'} : ${value}`, 'success')
+  const chooseLanguage = (value: string) => {
+    setLanguage(value)
+    localStorage.setItem('docsuite-language', value)
+    setOpenLanguage(false)
+    onNotify(`Langue sélectionnée : ${value}`, 'success')
   }
 
   const handle = (action: string) => {
@@ -156,16 +152,11 @@ export default function ToolsScreen({ onOpenSignature, onOpenScanner, onNavChang
         </section>
 
         <section className="border-t border-paper-100">
-          <button onClick={() => setOpenPreference(openPreference === 'language' ? null : 'language')} className="w-full flex items-center justify-between px-5 py-4">
+          <button onClick={() => setOpenLanguage((value) => !value)} className="w-full flex items-center justify-between px-5 py-4">
             <div className="flex items-center gap-3"><Globe size={18} className="text-iris-500" /><span className="text-[14px] font-medium text-ink-950">Langue</span></div>
-            <div className="flex items-center gap-1 text-ink-800/40"><span className="text-[13px]">{language}</span><ChevronRight size={16} className={openPreference === 'language' ? 'rotate-90' : ''} /></div>
+            <div className="flex items-center gap-1 text-ink-800/40"><span className="text-[13px]">{language}</span><ChevronRight size={16} className={openLanguage ? 'rotate-90' : ''} /></div>
           </button>
-          {openPreference === 'language' && <div className="grid grid-cols-2 gap-2 px-5 pb-4">{languages.map((item) => <button key={item} onClick={() => choosePreference('language', item)} className="flex items-center justify-between rounded-xl bg-paper-50 px-3 py-2.5 text-left text-[12px] font-semibold text-ink-950">{item}{language === item && <Check size={15} className="text-iris-500" />}</button>)}</div>}
-          <button onClick={() => setOpenPreference(openPreference === 'ethnicity' ? null : 'ethnicity')} className="w-full flex items-center justify-between px-5 py-4 border-t border-paper-100">
-            <div className="flex items-center gap-3"><span className="flex h-[18px] w-[18px] items-center justify-center rounded-full bg-teal-500/15 text-[10px] font-bold text-teal-600">A</span><span className="text-[14px] font-medium text-ink-950">Origine culturelle</span></div>
-            <div className="flex items-center gap-1 text-ink-800/40"><span className="text-[13px]">{ethnicity}</span><ChevronRight size={16} className={openPreference === 'ethnicity' ? 'rotate-90' : ''} /></div>
-          </button>
-          {openPreference === 'ethnicity' && <div className="grid grid-cols-2 gap-2 px-5 pb-4">{ethnicities.map((item) => <button key={item} onClick={() => choosePreference('ethnicity', item)} className="flex items-center justify-between rounded-xl bg-paper-50 px-3 py-2.5 text-left text-[12px] font-semibold text-ink-950">{item}{ethnicity === item && <Check size={15} className="text-teal-600" />}</button>)}</div>}
+          {openLanguage && <div className="grid grid-cols-2 gap-2 px-5 pb-4">{languages.map((item) => <button key={item} onClick={() => chooseLanguage(item)} className="flex items-center justify-between rounded-xl bg-paper-50 px-3 py-2.5 text-left text-[12px] font-semibold text-ink-950">{item}{language === item && <Check size={15} className="text-iris-500" />}</button>)}</div>}
           <button onClick={() => onThemeChange(theme === 'light' ? 'dark' : 'light')} className="w-full flex items-center justify-between px-5 py-4 border-t border-paper-100">
             <div className="flex items-center gap-3">
               <MoonStar size={18} className="text-ink-950/60" />
