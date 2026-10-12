@@ -8,33 +8,72 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
+
       - name: Install dependencies
         run: npm ci
+
       - name: Build web app
         run: npm run build
-      - name: Add Android platform
-        run: npx cap add android
-      - name: Sync Capacitor
-        run: npx cap sync android
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
-      - name: Build debug APK
+          cache: gradle
+
+      - name: Add Android platform
+        run: |
+          npx cap add android
+          npx cap sync android
+
+      - name: Build release APK
         working-directory: android
-        run: ./gradlew assembleDebug
-      - name: Upload APK
+        run: ./gradlew assembleRelease -x test --parallel --build-cache
+        env:
+          GRADLE_OPTS: "-Xmx2g -XX:MaxMetaspaceSize=512m"
+
+      - name: Build debug APK
+        if: failure()
+        working-directory: android
+        run: ./gradlew assembleDebug --build-cache
+        env:
+          GRADLE_OPTS: "-Xmx2g -XX:MaxMetaspaceSize=512m"
+
+      - name: Upload Release APK
         uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: docsuite-release-apk
+          path: android/app/build/outputs/apk/release/app-release-unsigned.apk
+          retention-days: 30
+
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: docsuite-debug-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 7
+
+      - name: Build Summary
+        if: always()
+        run: |
+          echo "## Android Build Complete" >> $GITHUB_STEP_SUMMARY
+          echo "✓ APK artifacts ready for testing and deployment" >> $GITHUB_STEP_SUMMARY
 
