@@ -16,7 +16,6 @@ export type ScreenId =
   | 'today'
   | 'library'
   | 'tools'
-  | 'showcase'
   | 'signature'
   | 'scanner'
   | 'scan-detect'

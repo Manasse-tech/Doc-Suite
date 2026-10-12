@@ -13,7 +13,6 @@ import SlideViewerScreen from './screens/SlideViewerScreen'
 import SheetViewerScreen from './screens/SheetViewerScreen'
 import PdfViewerScreen from './screens/PdfViewerScreen'
 import UnsupportedViewerScreen from './screens/UnsupportedViewerScreen'
-import UIShowcaseScreen from './screens/UIShowcaseScreen'
 import FileActionSheet from './components/FileActionSheet'
 import Toast, { type ToastTone } from './components/Toast'
 import { mockFiles } from './data/mockFiles'
@@ -172,11 +171,8 @@ export default function App() {
               setTheme(nextTheme)
               notify(nextTheme === 'dark' ? 'Mode sombre activé.' : 'Mode clair activé.', 'success')
             }}
-            onOpenShowcase={() => setScreen('showcase')}
           />
         )}
-
-        {screen === 'showcase' && <UIShowcaseScreen onBack={() => setScreen('tools')} onImportFiles={importFiles} onNotify={notify} />}
 
         {screen === 'signature' && (
           <SignatureScreen

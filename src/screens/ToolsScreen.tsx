@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import {
   Sparkles,
   TypeOutline,
@@ -18,6 +19,7 @@ import {
   Globe,
   MoonStar,
   ChevronRight,
+  Check,
 } from 'lucide-react'
 import StatusBar from '../components/StatusBar'
 import BottomNav from '../components/BottomNav'
@@ -31,7 +33,6 @@ interface ToolsScreenProps {
   onNotify: (message: string, tone?: ToastTone) => void
   theme: 'light' | 'dark'
   onThemeChange: (theme: 'light' | 'dark') => void
-  onOpenShowcase: () => void
 }
 
 const EDIT_TOOLS = [
@@ -93,7 +94,20 @@ function ToolTile({
   )
 }
 
-export default function ToolsScreen({ onOpenSignature, onOpenScanner, onNavChange, onNotify, theme, onThemeChange, onOpenShowcase }: ToolsScreenProps) {
+export default function ToolsScreen({ onOpenSignature, onOpenScanner, onNavChange, onNotify, theme, onThemeChange }: ToolsScreenProps) {
+  const [language, setLanguage] = useState(() => localStorage.getItem('docsuite-language') || 'Français')
+  const [ethnicity, setEthnicity] = useState(() => localStorage.getItem('docsuite-ethnicity') || 'Non renseignée')
+  const [openPreference, setOpenPreference] = useState<'language' | 'ethnicity' | null>(null)
+  const languages = ['Français', 'English', 'Português', 'Español', 'Deutsch', 'Baoulé', 'Dioula']
+  const ethnicities = ['Non renseignée', 'Baoulé', 'Akan', 'Dioula', 'Bété', 'Sénoufo', 'Guéré', 'Autre']
+
+  const choosePreference = (kind: 'language' | 'ethnicity', value: string) => {
+    if (kind === 'language') { setLanguage(value); localStorage.setItem('docsuite-language', value) }
+    else { setEthnicity(value); localStorage.setItem('docsuite-ethnicity', value) }
+    setOpenPreference(null)
+    onNotify(`${kind === 'language' ? 'Langue' : 'Ethnie'} : ${value}`, 'success')
+  }
+
   const handle = (action: string) => {
     if (action === 'signature') onOpenSignature()
     if (action === 'scan') onOpenScanner()
@@ -104,7 +118,7 @@ export default function ToolsScreen({ onOpenSignature, onOpenScanner, onNavChang
     <div className="flex h-full flex-col bg-white">
       <StatusBar />
       <div className="px-5 pt-3 pb-2">
-        <div className="flex items-center justify-between"><h1 className="text-[22px] font-display font-semibold text-ink-950">Boîte à outils</h1><button onClick={onOpenShowcase} className="rounded-full bg-iris-100 px-3 py-1.5 text-[10px] font-bold text-iris-500">UIShowcase</button></div>
+        <div><p className="text-[11px] font-bold uppercase tracking-[0.16em] text-iris-500">Productivité documentaire</p><h1 className="mt-1 text-[22px] font-display font-semibold text-ink-950">Boîte à outils</h1></div>
       </div>
 
       <div className="flex-1 overflow-y-auto no-scrollbar">
@@ -142,16 +156,16 @@ export default function ToolsScreen({ onOpenSignature, onOpenScanner, onNavChang
         </section>
 
         <section className="border-t border-paper-100">
-          <button onClick={() => onNotify('La langue active est Français.', 'info')} className="w-full flex items-center justify-between px-5 py-4">
-            <div className="flex items-center gap-3">
-              <Globe size={18} className="text-ink-950/60" />
-              <span className="text-[14px] font-medium text-ink-950">Langue</span>
-            </div>
-            <div className="flex items-center gap-1 text-ink-800/40">
-              <span className="text-[13px]">Français</span>
-              <ChevronRight size={16} />
-            </div>
+          <button onClick={() => setOpenPreference(openPreference === 'language' ? null : 'language')} className="w-full flex items-center justify-between px-5 py-4">
+            <div className="flex items-center gap-3"><Globe size={18} className="text-iris-500" /><span className="text-[14px] font-medium text-ink-950">Langue</span></div>
+            <div className="flex items-center gap-1 text-ink-800/40"><span className="text-[13px]">{language}</span><ChevronRight size={16} className={openPreference === 'language' ? 'rotate-90' : ''} /></div>
           </button>
+          {openPreference === 'language' && <div className="grid grid-cols-2 gap-2 px-5 pb-4">{languages.map((item) => <button key={item} onClick={() => choosePreference('language', item)} className="flex items-center justify-between rounded-xl bg-paper-50 px-3 py-2.5 text-left text-[12px] font-semibold text-ink-950">{item}{language === item && <Check size={15} className="text-iris-500" />}</button>)}</div>}
+          <button onClick={() => setOpenPreference(openPreference === 'ethnicity' ? null : 'ethnicity')} className="w-full flex items-center justify-between px-5 py-4 border-t border-paper-100">
+            <div className="flex items-center gap-3"><span className="flex h-[18px] w-[18px] items-center justify-center rounded-full bg-teal-500/15 text-[10px] font-bold text-teal-600">A</span><span className="text-[14px] font-medium text-ink-950">Origine culturelle</span></div>
+            <div className="flex items-center gap-1 text-ink-800/40"><span className="text-[13px]">{ethnicity}</span><ChevronRight size={16} className={openPreference === 'ethnicity' ? 'rotate-90' : ''} /></div>
+          </button>
+          {openPreference === 'ethnicity' && <div className="grid grid-cols-2 gap-2 px-5 pb-4">{ethnicities.map((item) => <button key={item} onClick={() => choosePreference('ethnicity', item)} className="flex items-center justify-between rounded-xl bg-paper-50 px-3 py-2.5 text-left text-[12px] font-semibold text-ink-950">{item}{ethnicity === item && <Check size={15} className="text-teal-600" />}</button>)}</div>}
           <button onClick={() => onThemeChange(theme === 'light' ? 'dark' : 'light')} className="w-full flex items-center justify-between px-5 py-4 border-t border-paper-100">
             <div className="flex items-center gap-3">
               <MoonStar size={18} className="text-ink-950/60" />
