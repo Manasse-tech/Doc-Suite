@@ -30,21 +30,11 @@ export default function TopBar({ onOpenAccount, onOpenSync, search, onSearchChan
         />
       </label>
       <button
-        onClick={onOpenAccount}
-        aria-label="Passer premium"
-        className="h-9 w-9 shrink-0 rounded-full bg-gradient-to-br from-amber-500 to-rose-500 flex items-center justify-center text-white"
-      >
-        <Crown size={16} fill="white" />
-      </button>
-      <button
         onClick={onOpenSync}
         aria-label="Synchronisation cloud"
         className="text-ink-950/70"
       >
         <CloudUpload size={20} strokeWidth={2} />
-      </button>
-      <button onClick={() => onNotify('Utilisez la recherche ou la synchronisation depuis cette barre.', 'info')} aria-label="Plus d'options" className="text-ink-950/70">
-        <MoreVertical size={19} />
       </button>
     </div>
   )

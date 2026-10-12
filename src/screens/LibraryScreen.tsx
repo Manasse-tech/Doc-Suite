@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { ScanLine, Sparkles } from 'lucide-react'
+import { ScanLine } from 'lucide-react'
 import StatusBar from '../components/StatusBar'
 import TopBar from '../components/TopBar'
 import LibraryTabs from '../components/LibraryTabs'
@@ -83,25 +83,6 @@ export default function LibraryScreen({
         onDrop={(event) => { event.preventDefault(); setDragging(false); onImportFiles(event.dataTransfer.files) }}
       >
         <input id="file-import" type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx" className="hidden" onChange={(event) => { if (event.target.files) onImportFiles(event.target.files); event.currentTarget.value = '' }} />
-        <div className="mx-4 my-3 rounded-2xl border border-dashed border-ink-950/10 bg-paper-50 px-4 py-3 flex items-center gap-3">
-          <div className="h-11 w-11 rounded-xl bg-iris-100 flex items-center justify-center shrink-0">
-            <Sparkles size={18} className="text-iris-500" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-[12.5px] font-semibold text-ink-950">
-              Essayez le résumé par IA
-            </p>
-            <p className="text-[11px] text-ink-800/45">
-              Obtenez l'essentiel d'un document en 10 secondes
-            </p>
-          </div>
-          <button
-            onClick={() => onNotify('Sélectionnez un document pour préparer son résumé.', 'info')}
-            className="shrink-0 rounded-full bg-iris-500 px-3 py-1.5 text-[11px] font-bold text-white"
-          >
-            Essayer
-          </button>
-        </div>
         <div className="mx-4 mb-2 flex items-center justify-between rounded-xl bg-paper-50 px-3 py-2">
           <span className="text-[11px] text-ink-800/45">Importez depuis votre appareil</span>
           <label htmlFor="file-import" className="cursor-pointer rounded-full bg-ink-950 px-3 py-1.5 text-[11px] font-bold text-white">Importer</label>
